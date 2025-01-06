@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
 
     name: {
-        type: string,
+        type: String,
         required: [true, "name is required"]
     },
      email:{
-        type: sting,
+        type: String,
         required: [true, "email is required"],
         unique: true,
         lowercase: true,
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
 
      },
      password:{
-        type: string,
+        type: String,
         required: [true, 'password is required'],
         minlength:[6, "pass must be atleast 6 characters long"]
      },
@@ -27,14 +27,14 @@ const userSchema = new mongoose.Schema({
                 default: 1
             },
             product:{
-                type: mongoose.Schema.type.objectId,
+                type: mongoose.Schema.Types.ObjectId,
                 ref:"product"
             }
         }
      ],
      role:{
-        type: string,
-        enum:[" customer","admin"],
+        type: String,
+        enum:["customer","admin"],
         default: "customer"
      },
 },
@@ -46,14 +46,14 @@ const userSchema = new mongoose.Schema({
 const user = mongoose.model("user", userSchema);
 
 userSchema.pre ("save", async (next) => {{
-    if (!this.ismodified("password")) return next();
+    if (!this.isModified("password")) return next();
 
     try {
         const  salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password,salt);
-        next()
+        next();
     } catch (error) {
-        next()
+        next(error);    
     }
 }
     
